@@ -1,0 +1,29 @@
+spring:
+  security:
+    user:
+      name: admin
+      password: admin
+  cache:
+    type: redis
+    redis:
+      enable-statistics: true
+  devtools:
+    restart:
+      enabled: true
+      additional-exclude: static/**
+    livereload:
+      enabled: false # we use Webpack dev server + BrowserSync for livereload
+  jackson:
+    serialization:
+      indent-output: true
+  data:
+    mongodb:
+      auto-index-creation: true
+  mail:
+    host: localhost
+    port: 25
+    username:
+    password:
+server:
+  port: 8080
+

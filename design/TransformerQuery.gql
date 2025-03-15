@@ -1,0 +1,18 @@
+{
+    transform {
+        from(image: "https://localhost:8080/some-image1.jpg") {
+            resize(width: 100, height: 100)
+            grayscale
+        }
+        to(format: JPEG, quality: 80)
+    }
+}
+
+{
+    transform {
+        from(image: "https://localhost:8080/some-image1.jpg") {
+            stitch(images: ["https://localhost:8080/some-image3.jpg", "https://localhost:8080/some-image2.jpg"])
+        }
+        to(format: PNG)
+    }
+}

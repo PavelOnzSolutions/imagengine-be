@@ -1,0 +1,94 @@
+spring:
+  profiles:
+    default: local
+  application:
+    name: imagengine
+  docker:
+    compose:
+      enabled: true
+      file: ./src/main/docker/services.yml
+      lifecycle-management: start-only
+  graphql:
+    path: /graphql
+    graphiql:
+      enabled: true
+      path: /graphiql
+  webflux:
+    problemdetails:
+      enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          authority-prefix: ''
+          authorities-claim-name: auth
+
+mongock:
+  migration-scan-package:
+    - solutions.onz.services.imagengine.dbmigrations
+
+management:
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include:
+          - configprops
+          - env
+          - health
+          - info
+          - logfile
+          - loggers
+          - prometheus
+          - threaddump
+  endpoint:
+    health:
+      show-details: always
+      #roles: 'ROLE_ADMIN'
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState
+  info:
+    git:
+      mode: full
+    env:
+      enabled: true
+  health:
+    mail:
+      enabled: false
+    mongo:
+      enabled: false
+    redis:
+      enabled: true
+  observations:
+    key-values:
+      application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+        step: 60
+  metrics:
+    enable:
+      http: true
+      jvm: true
+      logback: true
+      process: true
+      system: true
+
+    distribution:
+      percentiles-histogram:
+        all: true
+      percentiles:
+        all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
+    data:
+      repository:
+        autotime:
+          enabled: true
+    tags:
+      application: ${spring.application.name}
+

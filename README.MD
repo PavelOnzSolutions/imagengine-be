@@ -75,7 +75,10 @@ Returns an original image witrh marked objects plus their coordinates
 ```graphql
 {
     transform {
-        from(image: "https://localhost:8080/some-image1.jpg", transformers: [STITCH, STICKER]) {
+        from(
+              image: "https://localhost:8080/some-image1.jpg", 
+              transformers: [STITCH, STICKER]
+            ) {
             stitch(images: ["https://localhost:8080/some-image3.jpg", "https://localhost:8080/some-image2.jpg"])
             sticker(image: "https://localhost:8080/company-logo.jpg", x: 10, y: 10)
             cumulativeSink

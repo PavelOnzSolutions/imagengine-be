@@ -13,6 +13,12 @@ spring:
     graphiql:
       enabled: true
       path: /graphiql
+    cors:
+      allowed-methods: '*'
+      allowed-headers: '*'
+      allowed-origins: '*'
+    schema:
+      locations: classpath:schema/**/
   webflux:
     problemdetails:
       enabled: true

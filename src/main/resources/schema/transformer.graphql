@@ -1,10 +1,32 @@
 type Query {
-    transform(input: TransformInput!): TransformResult
+    transform(input: TransformerInput!): TransformResult
+    convert(input: ConverterInput!): ConverterResult
+    histogram(input: SourceInput!): [HistogramResult]
+    search(input: SearchInput!): SearchResult
 }
 
-input TransformInput {
+input TransformerInput {
     from: FromInput!
     to: ToInput!
+}
+
+input ConverterInput {
+    from: SourceInput!
+    to: ToInput!
+}
+
+input SearchInput {
+    what: WhatInput!
+    where: WhereInput!
+}
+
+input WhatInput {
+    object: String!
+    probability: Float
+}
+
+input WhereInput {
+    image: String!
 }
 
 input FromInput {
@@ -19,10 +41,15 @@ input FromInput {
     cumulativeSink: Boolean
 }
 
+input SourceInput {
+    images: [String!]!
+}
+
 input ResizeInput {
     width: Int!
     height: Int!
     sink: Boolean
+    order: Int!
 }
 
 input CropInput {
@@ -30,15 +57,18 @@ input CropInput {
     y: Int!
     width: Int!
     height: Int!
+    order: Int!
 }
 
 input RotateInput {
     angle: Int!
+    order: Int!
 }
 
 input StitchInput {
     images: [String!]!
     direction: StitchDirection!
+    order: Int!
 }
 
 enum StitchDirection {
@@ -52,6 +82,7 @@ input StickerInput {
     y: Int
     width: Int
     height: Int
+    order: Int!
 }
 
 input ToInput {
@@ -63,6 +94,30 @@ type TransformResult {
     success: Boolean!
     message: String
     url: String
+}
+
+type ConverterResult {
+    success: Boolean!
+    message: String
+    urls: [String]
+}
+
+type HistogramResult {
+    image: String!
+    histogram: [Int!]!
+    url: String!
+}
+
+type SearchResult {
+    success: Boolean!
+    message: String
+    markedImage: String
+    coordinates: [PlanarCoordinates]
+}
+
+type PlanarCoordinates {
+    x: Int!
+    y: Int!
 }
 
 enum Format {

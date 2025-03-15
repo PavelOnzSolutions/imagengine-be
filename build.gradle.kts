@@ -40,6 +40,7 @@ dependencies {
 	implementation("org.springframework.integration:spring-integration-mail")
 	implementation("org.springframework.security:spring-security-messaging")
 	implementation("org.springframework.session:spring-session-core")
+	implementation("org.springframework.boot:spring-boot-starter-undertow")
 
 	implementation("org.openpnp:opencv:4.9.0-0")
 
@@ -74,6 +75,12 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	modules {
+		module("org.springframework.boot:spring-boot-starter-tomcat") {
+			replacedBy("org.springframework.boot:spring-boot-starter-undertow", "Use Undertow instead of Tomcat, as its bit faster")
+		}
+	}
 }
 
 dependencyManagement {

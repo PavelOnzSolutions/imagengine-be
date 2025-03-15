@@ -76,8 +76,8 @@ Returns an original image witrh marked objects plus their coordinates
 {
     transform {
         from(image: "https://localhost:8080/some-image1.jpg") {
-            stitch(images: ["https://localhost:8080/some-image3.jpg", "https://localhost:8080/some-image2.jpg"])
-            sticker(image: "https://localhost:8080/company-logo.jpg", x: 10, y: 10)
+            stitch(images: ["https://localhost:8080/some-image3.jpg", "https://localhost:8080/some-image2.jpg"], order: 1)
+            sticker(image: "https://localhost:8080/company-logo.jpg", x: 10, y: 10, order: 2)
             cumulativeSink
         }
         to(format: JPEG)
@@ -90,8 +90,8 @@ Returns an original image witrh marked objects plus their coordinates
 {
     transform {
         from(image: "https://localhost:8080/some-image.jpg") {
-            resize(width: 100, height: 100)
-            grayscale
+            resize(width: 100, height: 100, order: 1)
+            grayscale(order: 2)
             cumulativeSink
         }
         to(format: PNG)

@@ -92,9 +92,12 @@ Returns an original image witrh marked objects plus their coordinates
 ```graphql
 {
     transform {
-        from(image: "https://localhost:8080/some-image.jpg", transformers: [RESIZE, GRAYSCALE]) {
-            resize(width: 100, height: 100, order: 1)
-            grayscale(order: 2)
+        from(
+              image: "https://localhost:8080/some-image.jpg", 
+              transformers: [RESIZE, GRAYSCALE]
+            ) {
+            resize(width: 100, height: 100)
+            grayscale
             cumulativeSink
         }
         to(format: PNG)

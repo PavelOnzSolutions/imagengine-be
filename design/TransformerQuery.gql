@@ -1,8 +1,9 @@
 {
     transform {
         from(image: "https://localhost:8080/some-image1.jpg") {
-            resize(width: 100, height: 100)
+            resize(width: 100, height: 100, sink: true)
             grayscale
+            cumulativeSink
         }
         to(format: JPEG, quality: 80)
     }
@@ -12,7 +13,36 @@
     transform {
         from(image: "https://localhost:8080/some-image1.jpg") {
             stitch(images: ["https://localhost:8080/some-image3.jpg", "https://localhost:8080/some-image2.jpg"])
+            sticker(image: "https://localhost:8080/company-logo.jpg", x: 10, y: 10)
+            cumulativeSink
         }
         to(format: PNG)
     }
 }
+
+{
+    convert {
+        from(images: ["https://localhost:8080/some-image1.png", "https://localhost:8080/some-image2.gif"])
+        to(format: JPEG, quality: 80)
+        cumulativeSink
+    }
+}
+
+{
+    histogram {
+        from(image: "https://localhost:8080/some-image1.jpg")
+        cumulativeSink
+    }
+}
+
+{
+    find {
+        what("https://localhost:8080/some-image1.jpg")
+        where("https://localhost:8080/some-image2.jpg")
+    }
+}
+
+
+
+# if sink=true, operation will expose the result on own URL
+# if cumulativeSink is present, the result will include cumulative output of all operations

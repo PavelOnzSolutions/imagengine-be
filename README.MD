@@ -11,6 +11,7 @@ Expose the modified images as a set of permalinks to be used in webpages.
 GraphQL service to convert/transform the images realtime.
 
 ### Supported functions
+#### Transformations
 - Resize
 - Rotate
 - Flip
@@ -25,6 +26,40 @@ GraphQL service to convert/transform the images realtime.
 - Stitch
 - Text overlay
 - Image overlay (sticker)
+
+#### Format conversion
+Between any supported formats. Example: 
+```graphql
+{
+    convert {
+        from(images: ["https://localhost:8080/some-image1.png", "https://localhost:8080/some-image2.gif"])
+        to(format: JPEG, quality: 80)
+        cumulativeSink
+    }
+}
+```
+
+#### Histogram
+Returns a histogram in PNG
+```graphql
+{
+    histogram {
+        from(image: "https://localhost:8080/some-image.jpg")
+        cumulativeSink
+    }
+}
+```
+
+#### Image search
+Returns an original image witrh marked objects plus their coordinates
+```graphql
+{
+    find {
+        what("https://localhost:8080/some-image1.jpg")
+        where("https://localhost:8080/some-image2.jpg")
+    }
+}
+```
 
 ### Supported output formats
 - JPEG
@@ -50,7 +85,7 @@ GraphQL service to convert/transform the images realtime.
 }
 ```
 
-#### 2. Resize an image to 100x100 px using and grayscale using Transformer
+#### 2. Resize an image to 100x100 px and convert to grayscale using Transformer
 ```graphql
 {
     transform {

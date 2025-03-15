@@ -1,0 +1,72 @@
+type Query {
+    transform(input: TransformInput!): TransformResult
+}
+
+input TransformInput {
+    from: FromInput!
+    to: ToInput!
+}
+
+input FromInput {
+    image: String!
+    resize: ResizeInput
+    crop: CropInput
+    rotate: RotateInput
+    stitch: StitchInput
+    sticker: StickerInput
+    grayscale: Boolean
+    sepia: Boolean
+    cumulativeSink: Boolean
+}
+
+input ResizeInput {
+    width: Int!
+    height: Int!
+    sink: Boolean
+}
+
+input CropInput {
+    x: Int!
+    y: Int!
+    width: Int!
+    height: Int!
+}
+
+input RotateInput {
+    angle: Int!
+}
+
+input StitchInput {
+    images: [String!]!
+    direction: StitchDirection!
+}
+
+enum StitchDirection {
+    HORIZONTAL
+    VERTICAL
+}
+
+input StickerInput {
+    image: String!
+    x: Int
+    y: Int
+    width: Int
+    height: Int
+}
+
+input ToInput {
+    format: Format!
+    quality: Int
+}
+
+type TransformResult {
+    success: Boolean!
+    message: String
+    url: String
+}
+
+enum Format {
+    JPEG
+    PNG
+    WEBP
+}

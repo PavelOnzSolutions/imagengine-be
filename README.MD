@@ -55,8 +55,8 @@ Returns an original image witrh marked objects plus their coordinates
 ```graphql
 {
     find {
-        what("https://localhost:8080/some-image1.jpg")
-        where("https://localhost:8080/some-image2.jpg")
+        what(object: "https://localhost:8080/some-image1.jpg", probability: 0.9)
+        where(image: "https://localhost:8080/some-image2.jpg")
     }
 }
 ```

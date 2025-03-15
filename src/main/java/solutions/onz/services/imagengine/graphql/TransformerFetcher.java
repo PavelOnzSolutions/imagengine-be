@@ -3,35 +3,39 @@ package solutions.onz.services.imagengine.graphql;
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsQuery;
 import com.netflix.graphql.dgs.InputArgument;
+import com.netflix.graphql.dgs.exceptions.DgsBadRequestException;
 import lombok.extern.slf4j.Slf4j;
-import solutions.onz.services.imagengine.codegen.types.FromInput;
-import solutions.onz.services.imagengine.codegen.types.TransformInput;
-import solutions.onz.services.imagengine.codegen.types.TransformResult;
+import reactor.core.publisher.Mono;
+import solutions.onz.services.imagengine.codegen.types.*;
+import solutions.onz.services.imagengine.services.ImageTransformerService;
+
+import java.util.List;
 
 @Slf4j
 @DgsComponent
 public class TransformerFetcher {
+    private final ImageTransformerService imageTransformerService;
+
+    public TransformerFetcher(ImageTransformerService imageTransformerService) {
+        this.imageTransformerService = imageTransformerService;
+    }
+
     @DgsQuery
-    public TransformResult transform(@InputArgument TransformInput input) {
+    public Mono<TransformResult> transform(@InputArgument TransformerInput input) {
         String image = input.getFrom().getImage();
         FromInput from = input.getFrom();
 
-        if (from.getCrop() != null) {
-            log.info("Cropping image: {}", image);
-        }
+        return imageTransformerService.transform(input)
+                .onErrorResume(e -> Mono.error(new DgsBadRequestException("Failed to transform image: " + e.getMessage())));
 
-        if (from.getResize() != null) {
-            log.info("Resizing image: {} to {}, {}", image, from.getResize().getWidth(), from.getResize().getHeight());
-        }
+    }
 
-        if (from.getRotate() != null) {
-            log.info("Rotating image: {} by {}", image, from.getRotate().getAngle());
-        }
-        if (from.getStitch() != null) {
-            log.info("Stitching images: {} to {} {}", image, from.getStitch().getImages(), from.getStitch().getDirection());
-        }
+    @DgsQuery
+    public Mono<ConverterResult> convert(@InputArgument ConverterInput input) {
+        List<String> images = input.getFrom().getImages();
+        Format format = input.getTo().getFormat();
 
-        return TransformResult.newBuilder().success(true).url("someUrl").message("Finished").build();
-
+        return imageTransformerService.convert(input)
+                .onErrorResume(e -> Mono.error(new DgsBadRequestException("Failed to convert image: " + e.getMessage())));
     }
 }

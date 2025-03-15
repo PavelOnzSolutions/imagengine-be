@@ -31,11 +31,13 @@ input WhereInput {
 
 input FromInput {
     image: String!
+    transformers: [Transformers!]!
     resize: ResizeInput
     crop: CropInput
     rotate: RotateInput
     stitch: StitchInput
     sticker: StickerInput
+    watermark: WatermarkInput
     grayscale: Boolean
     sepia: Boolean
     cumulativeSink: Boolean
@@ -49,7 +51,6 @@ input ResizeInput {
     width: Int!
     height: Int!
     sink: Boolean
-    order: Int!
 }
 
 input CropInput {
@@ -57,23 +58,15 @@ input CropInput {
     y: Int!
     width: Int!
     height: Int!
-    order: Int!
 }
 
 input RotateInput {
     angle: Int!
-    order: Int!
 }
 
 input StitchInput {
     images: [String!]!
     direction: StitchDirection!
-    order: Int!
-}
-
-enum StitchDirection {
-    HORIZONTAL
-    VERTICAL
 }
 
 input StickerInput {
@@ -82,7 +75,14 @@ input StickerInput {
     y: Int
     width: Int
     height: Int
-    order: Int!
+}
+
+input WatermarkInput {
+    image: String!
+    x: Int
+    y: Int
+    width: Int
+    height: Int
 }
 
 input ToInput {
@@ -124,4 +124,23 @@ enum Format {
     JPEG
     PNG
     WEBP
+    GIF
+    TIFF
+    BMP
+}
+
+enum StitchDirection {
+    HORIZONTAL
+    VERTICAL
+}
+
+enum Transformers {
+    RESIZE
+    CROP
+    ROTATE
+    STITCH
+    STICKER
+    GRAYSCALE
+    SEPIA
+    WATERMARK
 }

@@ -36,7 +36,7 @@ GraphQL service to convert/transform the images realtime.
 
 
 ### Examples
-#### Stitching three images using Transformer and adding a logo to the left bottom corner
+#### 1. Stitching three images using Transformer and adding a logo to the left bottom corner
 ```graphql
 {
     transform {
@@ -45,7 +45,22 @@ GraphQL service to convert/transform the images realtime.
             sticker(image: "https://localhost:8080/company-logo.jpg", x: 10, y: 10)
             cumulativeSink
         }
+        to(format: JPEG)
+    }
+}
+```
+
+#### 2. Resize an image to 100x100 px using and grayscale using Transformer
+```graphql
+{
+    transform {
+        from(image: "https://localhost:8080/some-image.jpg") {
+            resize(width: 100, height: 100)
+            grayscale
+            cumulativeSink
+        }
         to(format: PNG)
     }
 }
 ```
+

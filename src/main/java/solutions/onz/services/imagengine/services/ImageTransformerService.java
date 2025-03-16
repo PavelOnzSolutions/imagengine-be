@@ -22,11 +22,17 @@ public class ImageTransformerService {
     private final WebClient webClient;
     private final ImageTransformers imageTransformers;
     private final DeepLinkService deepLinkService;
+    private final ImageStorageService imageStorageService;
 
-    public ImageTransformerService(WebClient webClient, ImageTransformers imageTransformers, DeepLinkService deepLinkService) {
+    public ImageTransformerService(
+            WebClient webClient,
+            ImageTransformers imageTransformers,
+            DeepLinkService deepLinkService,
+            ImageStorageService imageStorageService) {
         this.webClient = webClient;
         this.imageTransformers = imageTransformers;
         this.deepLinkService = deepLinkService;
+        this.imageStorageService = imageStorageService;
     }
 
     /**
@@ -40,8 +46,7 @@ public class ImageTransformerService {
                 .flatMap(mat -> {
                     log.info("Resulting image has dimensions: {}x{} and size: {}", mat.width(), mat.height(), mat.total());
 
-                    String outUrl = "http://test";
-                    return Mono.just(outUrl);
+                    return imageStorageService.saveImage(mat, input.getTo().getFormat().toString()).flatMap(Mono::just);
                 })
                         .map(outPath -> TransformResult.newBuilder()
                                 .url(outPath)

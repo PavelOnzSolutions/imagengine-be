@@ -11,6 +11,12 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+// TODO: Delete the image file from FS after dowload, or store it only in Redis
+
+
+/**
+ * Reactive Service for managing deep links.
+ */
 @Slf4j
 @Service
 public class DeepLinkService {
@@ -20,10 +26,21 @@ public class DeepLinkService {
 
     private final DeepLinkRepository deepLinkRepository;
 
+    /**
+     * Constructor for DeepLinkService.
+     *
+     * @param deepLinkRepository the repository for deep links
+     */
     public DeepLinkService(DeepLinkRepository deepLinkRepository) {
         this.deepLinkRepository = deepLinkRepository;
     }
 
+    /**
+     * Retrieves a deep link by its shortcut.
+     *
+     * @param shortLink the shortcut of the deep link
+     * @return a Mono emitting the deep link if found and not expired, otherwise an error
+     */
     public Mono<DeepLink> getDeepLink(String shortLink) {
         return this.deepLinkRepository.findByShortcut(shortLink)
                 .flatMap(dl -> {
@@ -39,6 +56,12 @@ public class DeepLinkService {
                 .doOnError(error -> log.error("Error retrieving deep link: {}", error.getMessage()));
     }
 
+    /**
+     * Creates a new deep link for the given URL.
+     *
+     * @param url the URL to create a deep link for
+     * @return a Mono emitting the created deep link
+     */
     public Mono<DeepLink> createLink(String url) {
         return this.deepLinkRepository.findByPathAndCreatedAfter(url, Instant.now().minusSeconds((60 * 60) * 168))
                 .collectList()
@@ -53,6 +76,11 @@ public class DeepLinkService {
                 .doOnError(error -> log.error("Error creating deep link: {}", error.getMessage()));
     }
 
+    /**
+     * Generates a random hash for the deep link.
+     *
+     * @return the generated hash
+     */
     public String generateLinkHash() {
         StringBuilder hash = new StringBuilder(10);
         for (int i = 0; i < 4; i++) {

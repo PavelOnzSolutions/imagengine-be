@@ -11,12 +11,19 @@ import org.springframework.web.reactive.function.client.WebClient;
 @ConfigurationProperties(prefix = "imagengine", ignoreUnknownFields = false)
 public class ApplicationProperties {
     private Security security = new Security();
+    private Storage storage = new Storage();
 
     @Getter
     @Setter
     public static class Security {
         public String csp;
         public String jwtBase64Secret;
+    }
+
+    @Getter
+    @Setter
+    public static class Storage {
+        public String path;
     }
 
     @Bean

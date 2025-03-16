@@ -41,6 +41,18 @@ dependencies {
 	implementation("org.springframework.security:spring-security-messaging")
 	implementation("org.springframework.session:spring-session-core")
 	implementation("org.springframework.boot:spring-boot-starter-undertow")
+	implementation("org.springframework.integration:spring-integration-redis")
+	implementation("org.springframework.session:spring-session-data-redis")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+
+	implementation("jakarta.annotation:jakarta.annotation-api")
+
+	implementation("org.apache.commons:commons-lang3")
+
+	implementation("io.micrometer:micrometer-registry-prometheus")
+	implementation("io.micrometer:micrometer-registry-prometheus-simpleclient")
 
 	implementation("org.openpnp:opencv:4.9.0-0")
 
@@ -58,7 +70,10 @@ dependencies {
 	implementation(platform("com.azure.spring:spring-cloud-azure-dependencies:5.20.1"))
 	implementation("com.azure.spring:spring-cloud-azure-starter")
 	implementation("com.azure.spring:spring-cloud-azure-starter-keyvault")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
+
+
+
+	implementation("com.azure.spring:spring-cloud-azure-starter-actuator")
 
 
 	compileOnly("org.projectlombok:lombok")
@@ -73,7 +88,7 @@ dependencies {
 	testImplementation("org.springframework.graphql:spring-graphql-test")
 	testImplementation("org.springframework.integration:spring-integration-test")
 	testImplementation("org.springframework.security:spring-security-test")
-	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	modules {

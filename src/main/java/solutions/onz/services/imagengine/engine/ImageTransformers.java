@@ -13,6 +13,11 @@ public class ImageTransformers {
         log.info("Resizing image to {}x{}", width, height);
         Mat resizedImage = new Mat();
         Imgproc.resize(image, resizedImage, new Size(width, height));
+        if (resizedImage.empty()) {
+            log.error("Failed to resize image");
+        } else {
+            log.info("Image resized successfully");
+        }
         return resizedImage;
     }
 }

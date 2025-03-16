@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import solutions.onz.services.imagengine.codegen.types.*;
 import solutions.onz.services.imagengine.engine.ImageTransformers;
+import solutions.onz.services.imagengine.graphql.exception.ReactiveImageTransformerException;
 
 import java.net.URL;
 
@@ -35,21 +36,21 @@ public class ImageTransformerService {
     public Mono<TransformResult> transform(TransformerInput input) {
         return applyTransformers(input.getFrom())
                 .flatMap(mat -> {
-                    return output(input.getTo()).map(outPath -> {
-                        return TransformResult.newBuilder()
+                    log.info("Resulting image has dimensions: {}x{} and size: {}", mat.width(), mat.height(), mat.total());
+
+                    String outUrl = "http://test";
+                    return Mono.just(outUrl);
+                })
+                        .map(outPath -> TransformResult.newBuilder()
                                 .url(outPath)
                                 .success(true)
                                 .message("Image transformed successfully")
-                                .build();
-                    });
-                })
-                .doOnError(err -> {
-                    log.error("Error transforming image: {}", err.getMessage());
-                });
+                                .build())
+                .doOnError(err -> log.error("Error transforming image: {}", err.getMessage()));
     }
 
     public Mono<Mat> applyTransformers(FromInput input) {
-        return Mono.just(input.getImage())
+        return Mono.just(input.getSource())
                 .flatMap(this::getImageFromUrl)
                 .flatMap(img -> {
                     for (Transformers transformer : input.getTransformers()) {
@@ -57,6 +58,8 @@ public class ImageTransformerService {
                             case RESIZE -> {
                                 if (null != input.getResize()) {
                                     return resizeImage(Mono.just(img), input.getResize().getWidth(), input.getResize().getHeight());
+                                } else {
+                                    return Mono.error(() -> new ReactiveImageTransformerException("Resize transformer requires width and height"));
                                 }
                             }
                         }
@@ -87,10 +90,7 @@ public class ImageTransformerService {
     }
 
     private Mono<Mat> resizeImage(Mono<Mat> matMono, int width, int height) {
-        return matMono.map(mat -> {
-            imageTransformers.resize(mat, width, height);
-            return mat;
-        });
+        return matMono.map(mat -> imageTransformers.resize(mat, width, height));
     }
 
 
@@ -101,7 +101,6 @@ public class ImageTransformerService {
         }
         return mat;
     }
-
 
 
 }

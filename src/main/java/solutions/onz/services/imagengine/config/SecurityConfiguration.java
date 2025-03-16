@@ -70,6 +70,7 @@ public class SecurityConfiguration {
                         // prettier-ignore
                         // TODO: Disabled AuthN/AuthZ as this would be handled by Cloud provider
                         authz
+                                .pathMatchers("/graphql", "/graphiql").permitAll()
                                 .pathMatchers("/api/result-files/**").permitAll()
                                 .pathMatchers("/api/authenticate").permitAll()
                                 .pathMatchers("/api/register").permitAll()

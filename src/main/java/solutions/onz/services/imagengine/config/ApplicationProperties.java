@@ -16,6 +16,7 @@ public class ApplicationProperties {
     @Setter
     public static class Security {
         public String csp;
+        public String jwtBase64Secret;
     }
 
     @Bean

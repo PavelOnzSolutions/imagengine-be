@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Profile;
 import reactor.core.publisher.Hooks;
 
 @Configuration
-@Profile("!prod")
+@Profile("local")
 public class ReactorConfiguration {
 
     public ReactorConfiguration() {

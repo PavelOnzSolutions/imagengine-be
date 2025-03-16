@@ -1,8 +1,8 @@
 type Query {
-    transform(input: TransformerInput!): TransformResult
-    convert(input: ConverterInput!): ConverterResult
-    histogram(input: SourceInput!): [HistogramResult]
-    search(input: SearchInput!): SearchResult
+    transform(image: TransformerInput!): TransformResult
+    convert(images: ConverterInput!): ConverterResult
+    histogram(image: SourceInput!): [HistogramResult]
+    search(in: SearchInput!): SearchResult
 }
 
 input TransformerInput {
@@ -30,7 +30,7 @@ input WhereInput {
 }
 
 input FromInput {
-    image: String!
+    source: String!
     transformers: [Transformers!]!
     resize: ResizeInput
     crop: CropInput
@@ -44,7 +44,7 @@ input FromInput {
 }
 
 input SourceInput {
-    images: [String!]!
+    imageList: [String!]!
 }
 
 input ResizeInput {

@@ -1,103 +1,94 @@
 package solutions.onz.services.imagengine.config;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.*;
-import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter;
+import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter;
+import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher;
+import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher;
+import solutions.onz.services.imagengine.identity.AuthoritiesConstants;
 
-import java.util.function.Supplier;
+import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
 
 @Configuration
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
+    private final ApplicationProperties properties;
+
+    public SecurityConfiguration(ApplicationProperties properties) {
+        this.properties = properties;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
-        return new MvcRequestMatcher.Builder(introspector);
+    public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService) {
+        UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(
+                userDetailsService
+        );
+        authenticationManager.setPasswordEncoder(passwordEncoder());
+        return authenticationManager;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(
-            HttpSecurity http,
-            MvcRequestMatcher.Builder mvc
-    ) throws Exception {
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http
-                .cors(Customizer.withDefaults())
-                /* .csrf(csrf -> {
-                     csrf
-                             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                             .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler());
-                 })*/
-                .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers
-                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))
-                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.UNSAFE_URL))
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-
+                .securityMatcher(
+                        new NegatedServerWebExchangeMatcher(
+                                new OrServerWebExchangeMatcher(pathMatchers("/app/**", "/i18n/**", "/content/**", "/swagger-ui/**"))
+                        )
                 )
-                .authorizeHttpRequests(authz ->
+                .cors(withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .headers(headers ->
+                        headers
+                                .contentSecurityPolicy(csp -> csp.policyDirectives(properties.getSecurity().getCsp()))
+                                .frameOptions(frameOptions -> frameOptions.mode(XFrameOptionsServerHttpHeadersWriter.Mode.DENY))
+                                .referrerPolicy(referrer ->
+                                        referrer.policy(ReferrerPolicyServerHttpHeadersWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+                                )
+                                .permissionsPolicy(permissions ->
+                                        permissions.policy(
+                                                "camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()"
+                                        )
+                                )
+                )
+                .authorizeExchange(authz ->
+                        // prettier-ignore
+                        // TODO: Disabled AuthN/AuthZ as this would be handled by Cloud provider
                         authz
-                                .requestMatchers(mvc.pattern("/**")).permitAll()
-                );
+                                .pathMatchers("/api/result-files/**").permitAll()
+                                .pathMatchers("/api/authenticate").permitAll()
+                                .pathMatchers("/api/register").permitAll()
+                                .pathMatchers("/api/activate").permitAll()
+                                .pathMatchers("/api/account/reset-password/init").permitAll()
+                                .pathMatchers("/api/account/reset-password/finish").permitAll()
+                                .pathMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
+                                .pathMatchers("/api/**").authenticated()
+                                .pathMatchers("/services/**").authenticated()
+                                .pathMatchers("/v3/api-docs/**").permitAll()
+                                .pathMatchers("/management/health").permitAll()
+                                .pathMatchers("/management/health/**").permitAll()
+                                .pathMatchers("/management/jhimetrics").permitAll()
+                                .pathMatchers("/management/info").permitAll()
+                                .pathMatchers("/management/prometheus").permitAll()
+                                .pathMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
+                )
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
         return http.build();
-    }
-
-    /**
-     * Custom CSRF handler to provide BREACH protection.
-     *
-     * @see <a href="https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html#csrf-integration-javascript-spa">Spring Security Documentation - Integrating with CSRF Protection</a>
-     * @see <a href="https://stackoverflow.com/q/74447118/65681">CSRF protection not working with Spring Security 6</a>
-     */
-    static final class SpaCsrfTokenRequestHandler extends CsrfTokenRequestAttributeHandler {
-
-        private final CsrfTokenRequestHandler delegate = new XorCsrfTokenRequestAttributeHandler();
-
-        @Override
-        public void handle(HttpServletRequest request, HttpServletResponse response, Supplier<CsrfToken> csrfToken) {
-            /*
-             * Always use XorCsrfTokenRequestAttributeHandler to provide BREACH protection of
-             * the CsrfToken when it is rendered in the response body.
-             */
-            this.delegate.handle(request, response, csrfToken);
-        }
-
-        @Override
-        public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
-            /*
-             * If the request contains a request header, use CsrfTokenRequestAttributeHandler
-             * to resolve the CsrfToken. This applies when a single-page application includes
-             * the header value automatically, which was obtained via a cookie containing the
-             * raw CsrfToken.
-             */
-            if (StringUtils.hasText(request.getHeader(csrfToken.getHeaderName()))) {
-                return super.resolveCsrfTokenValue(request, csrfToken);
-            }
-            /*
-             * In all other cases (e.g. if the request contains a request parameter), use
-             * XorCsrfTokenRequestAttributeHandler to resolve the CsrfToken. This applies
-             * when a server-side rendered form includes the _csrf request parameter as a
-             * hidden input.
-             */
-            return this.delegate.resolveCsrfTokenValue(request, csrfToken);
-        }
     }
 }

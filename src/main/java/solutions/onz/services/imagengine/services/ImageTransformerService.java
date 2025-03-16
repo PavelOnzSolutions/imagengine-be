@@ -26,9 +26,26 @@ public class ImageTransformerService {
         this.imageTransformers = imageTransformers;
     }
 
+    /**
+     * Transform an image. Takes Query input
+     *
+     * @param input
+     * @return
+     */
     public Mono<TransformResult> transform(TransformerInput input) {
-        return Mono.justOrEmpty(applyTransformers())
-
+        return applyTransformers(input.getFrom())
+                .flatMap(mat -> {
+                    return output(input.getTo()).map(outPath -> {
+                        return TransformResult.newBuilder()
+                                .url(outPath)
+                                .success(true)
+                                .message("Image transformed successfully")
+                                .build();
+                    });
+                })
+                .doOnError(err -> {
+                    log.error("Error transforming image: {}", err.getMessage());
+                });
     }
 
     public Mono<Mat> applyTransformers(FromInput input) {
@@ -50,7 +67,11 @@ public class ImageTransformerService {
                 .doOnError(error -> log.error("Error transforming image: {}", error.getMessage()));
     }
 
-    public Mono<ConverterResult> convert(ConverterInput input) {
+    public Mono<ConverterResult> convert(SourceInput input) {
+        return Mono.empty();
+    }
+
+    public Mono<String> output(ToInput spec) {
         return Mono.empty();
     }
 

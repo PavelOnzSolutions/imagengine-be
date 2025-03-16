@@ -35,7 +35,6 @@ public class TransformerFetcher {
         List<String> images = input.getFrom().getImages();
         Format format = input.getTo().getFormat();
 
-        return imageTransformerService.convert(input)
-                .onErrorResume(e -> Mono.error(new DgsBadRequestException("Failed to convert image: " + e.getMessage())));
+        return Mono.empty();
     }
 }

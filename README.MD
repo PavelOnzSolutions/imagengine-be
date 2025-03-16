@@ -75,9 +75,12 @@ Returns an original image witrh marked objects plus their coordinates
 ```graphql
 {
     transform {
-        from(image: "https://localhost:8080/some-image1.jpg") {
-            stitch(images: ["https://localhost:8080/some-image3.jpg", "https://localhost:8080/some-image2.jpg"], order: 1)
-            sticker(image: "https://localhost:8080/company-logo.jpg", x: 10, y: 10, order: 2)
+        from(
+              image: "https://localhost:8080/some-image1.jpg", 
+              transformers: [STITCH, STICKER]
+            ) {
+            stitch(images: ["https://localhost:8080/some-image3.jpg", "https://localhost:8080/some-image2.jpg"])
+            sticker(image: "https://localhost:8080/company-logo.jpg", x: 10, y: 10)
             cumulativeSink
         }
         to(format: JPEG)
@@ -89,9 +92,12 @@ Returns an original image witrh marked objects plus their coordinates
 ```graphql
 {
     transform {
-        from(image: "https://localhost:8080/some-image.jpg") {
-            resize(width: 100, height: 100, order: 1)
-            grayscale(order: 2)
+        from(
+              image: "https://localhost:8080/some-image.jpg", 
+              transformers: [RESIZE, GRAYSCALE]
+            ) {
+            resize(width: 100, height: 100)
+            grayscale
             cumulativeSink
         }
         to(format: PNG)

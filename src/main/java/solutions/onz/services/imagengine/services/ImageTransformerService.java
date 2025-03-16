@@ -21,10 +21,12 @@ import java.net.URL;
 public class ImageTransformerService {
     private final WebClient webClient;
     private final ImageTransformers imageTransformers;
+    private final DeepLinkService deepLinkService;
 
-    public ImageTransformerService(WebClient webClient, ImageTransformers imageTransformers) {
+    public ImageTransformerService(WebClient webClient, ImageTransformers imageTransformers, DeepLinkService deepLinkService) {
         this.webClient = webClient;
         this.imageTransformers = imageTransformers;
+        this.deepLinkService = deepLinkService;
     }
 
     /**

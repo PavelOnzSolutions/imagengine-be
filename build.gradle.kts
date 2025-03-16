@@ -88,6 +88,14 @@ dependencies {
 	testImplementation("org.springframework.graphql:spring-graphql-test")
 	testImplementation("org.springframework.integration:spring-integration-test")
 	testImplementation("org.springframework.security:spring-security-test")
+	testImplementation("io.projectreactor.tools:blockhound-junit-platform:1.0.10.RELEASE")
+
+	testImplementation("com.tngtech.archunit:archunit-junit5-api:1.3.0") {
+		exclude(group = "org.slf4j", module = "slf4j-api")
+	}
+	testRuntimeOnly("com.tngtech.archunit:archunit-junit5-engine:1.3.0") {
+		exclude(group = "org.slf4j", module = "slf4j-api")
+	}
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
@@ -112,4 +120,11 @@ tasks.generateJava {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	exclude( "**/*IT*", "**/*IntTest*")
+	testLogging {
+		events("passed", "skipped", "failed")
+		showExceptions = true
+		showCauses = true
+	}
+
 }

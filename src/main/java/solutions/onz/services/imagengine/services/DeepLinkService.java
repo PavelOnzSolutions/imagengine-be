@@ -2,6 +2,7 @@ package solutions.onz.services.imagengine.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import solutions.onz.services.imagengine.domain.DeepLink;
 import solutions.onz.services.imagengine.repository.DeepLinkRepository;
 
@@ -23,36 +24,37 @@ public class DeepLinkService {
         this.deepLinkRepository = deepLinkRepository;
     }
 
-    public Optional<DeepLink> getDeepLink(String shortLink) {
-        Optional<DeepLink> out = Optional.empty();
-        if (this.deepLinkRepository.findByShortcut(shortLink).isPresent()) {
-            DeepLink dl = this.deepLinkRepository.findByShortcut(shortLink).get();
-            if (Instant.now().getEpochSecond() - dl.getCreated().getEpochSecond() < (60 * 60) * 168) {
-                out = Optional.of(dl);
-            } else {
-                log.info("Deep link expired: {}", shortLink);
-                this.deepLinkRepository.deleteById(dl.getId());
-            }
-        } else {
-            log.info("Deep link not found: {}", shortLink);
-        }
-        return out;
+    public Mono<DeepLink> getDeepLink(String shortLink) {
+        return this.deepLinkRepository.findByShortcut(shortLink)
+                .flatMap(dl -> {
+                    if (Instant.now().getEpochSecond() - dl.getCreated().getEpochSecond() < (60 * 60) * 168) {
+                        return Mono.just(dl);
+                    } else {
+                        log.info("Deep link expired: {}", shortLink);
+                        return this.deepLinkRepository.deleteById(dl.getId())
+                                .then(Mono.empty());
+                    }
+                })
+                .switchIfEmpty(Mono.error(new RuntimeException("Deep link not found or expired")))
+                .doOnError(error -> log.error("Error retrieving deep link: {}", error.getMessage()));
     }
 
-    public DeepLink createLink(String url) {
-        List<DeepLink> dl = this.deepLinkRepository.findByPathAndCreatedAfter(url, Instant.now().minusSeconds((60 * 60) * 168));
-
-        if (!dl.isEmpty()) {
-            DeepLink d = dl.getFirst();
-            d.setCreated(Instant.now()); // Reset timer
-            return this.deepLinkRepository.save(d);
-        }
-
-        return this.deepLinkRepository.save(new DeepLink(null, generateLinkHash(), url, Instant.now()));
+    public Mono<DeepLink> createLink(String url) {
+        return this.deepLinkRepository.findByPathAndCreatedAfter(url, Instant.now().minusSeconds((60 * 60) * 168))
+                .collectList()
+                .flatMap(dl -> {
+                    if (!dl.isEmpty()) {
+                        DeepLink d = dl.get(0);
+                        d.setCreated(Instant.now()); // Reset timer
+                        return this.deepLinkRepository.save(d);
+                    }
+                    return this.deepLinkRepository.save(new DeepLink(null, generateLinkHash(), url, Instant.now()));
+                })
+                .doOnError(error -> log.error("Error creating deep link: {}", error.getMessage()));
     }
 
     public String generateLinkHash() {
-        StringBuilder hash = new StringBuilder(8);
+        StringBuilder hash = new StringBuilder(10);
         for (int i = 0; i < 4; i++) {
             hash.append(CONSONANTS[RANDOM.nextInt(CONSONANTS.length)]);
             hash.append(VOWELS[RANDOM.nextInt(VOWELS.length)]);

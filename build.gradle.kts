@@ -73,10 +73,8 @@ dependencies {
 	implementation(platform("com.azure.spring:spring-cloud-azure-dependencies:5.20.1"))
 	implementation("com.azure.spring:spring-cloud-azure-starter")
 	implementation("com.azure.spring:spring-cloud-azure-starter-keyvault")
-
-
-
 	implementation("com.azure.spring:spring-cloud-azure-starter-actuator")
+
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 

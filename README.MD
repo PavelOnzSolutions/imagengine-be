@@ -63,7 +63,7 @@ query GetImageHistogram {
 ```
 
 #### Image search
-Returns an original image with marked objects plus their planar coordinates
+Returns an original image with marked objects plus their planar coordinates, pointing to the center of the object found in the image.
 ```graphql
 query FindFaceQuery {
     search(
@@ -127,14 +127,14 @@ query MyStitchingQuery {
 }
 ```
 
-#### 2. Resize an image to 100x100 px and convert to grayscale using Transformer
+#### 2. Resize an image to 100x100 px and convert to grayscale using Transformer. Notice the Grayscale filter does not need any additional parameters.
 ```graphql
 query MyResizeQuery {
     transform(
         image: {
             from: {
                 source: "https://someimageservice.com/image.jpg",
-                transformers: RESIZE,
+                transformers: [RESIZE, GRAYSCALE],
                 resize: {
                     width: 100,
                     height: 100

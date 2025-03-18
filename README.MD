@@ -30,33 +30,59 @@ GraphQL service to convert/transform the images realtime.
 #### Format conversion
 Between any supported formats. Example: 
 ```graphql
-{
-    convert {
-        from(images: ["https://localhost:8080/some-image1.png", "https://localhost:8080/some-image2.gif"])
-        to(format: JPEG, quality: 80)
-        cumulativeSink
+query ConversionQueryExample {
+    convert(images: {
+        from: {
+            imageList: ["https://someimageservice.com/image.jpg", "https://someimageservice.com/image23452.png"]
+        },
+        to: {
+            format: GIF
+        }
+    })
+    {
+       urls
+       success
     }
 }
 ```
 
 #### Histogram
-Returns a histogram in PNG
+Returns a histogram as numbers and URL to PNG graph 
 ```graphql
-{
-    histogram {
-        from(image: "https://localhost:8080/some-image.jpg")
-        cumulativeSink
+query GetImageHistogram {
+    histogram(
+        images: {
+            imageList:  ["https://someimageservice.com/image.jpg", "https://someimageservice.com/image23452.png"]
+    })
+    {
+        image
+        histogram
+        url
     }
 }
 ```
 
 #### Image search
-Returns an original image witrh marked objects plus their coordinates
+Returns an original image with marked objects plus their planar coordinates
 ```graphql
-{
-    find {
-        what(object: "https://localhost:8080/some-image1.jpg", probability: 0.9)
-        where(image: "https://localhost:8080/some-image2.jpg")
+query FindFaceQuery {
+    search(
+        in: {
+            what: {
+                object: "https://someimageservice.com/PetersIDPhoto.jpg",
+                probability: 0.8
+            },
+            where: {
+                image: "https://someimageservice.com/teambuildingPhoto04.jpg" 
+            }
+        } 
+    ) {
+        success
+        coordinates {
+            x
+            y
+        }
+        markedImage
     }
 }
 ```
@@ -71,36 +97,57 @@ Returns an original image witrh marked objects plus their coordinates
 
 
 ### Examples
-#### 1. Stitching three images using Transformer and adding a logo to the left bottom corner
+#### 1. Stitching three images using Transformer and adding a logo (in its original size, as width/height spec is missing), to the left bottom corner
 ```graphql
-{
-    transform {
-        from(
-              image: "https://localhost:8080/some-image1.jpg", 
-              transformers: [STITCH, STICKER]
-            ) {
-            stitch(images: ["https://localhost:8080/some-image3.jpg", "https://localhost:8080/some-image2.jpg"])
-            sticker(image: "https://localhost:8080/company-logo.jpg", x: 10, y: 10)
-            cumulativeSink
+query MyStitchingQuery {
+    transform(
+        image: {
+            from: {
+                source: "https://someimageservice.com/image.jpg",
+                transformers: [STITCH, STICKER],
+                stitch: {
+                    images: ["https://someimageservice.com/image34.jpg", "https://someimageservice.com/image11.jpg"],
+                    direction: HORIZONTAL
+                },
+                sticker: {
+                    image: "https://mycompany/logo.png",
+                    x: 10,
+                    y: 10,
+                }
+            },
+            to: {
+                format: PNG
+            }
         }
-        to(format: JPEG)
+    ) {
+        url
+        success
+        message
     }
 }
 ```
 
 #### 2. Resize an image to 100x100 px and convert to grayscale using Transformer
 ```graphql
-{
-    transform {
-        from(
-              image: "https://localhost:8080/some-image.jpg", 
-              transformers: [RESIZE, GRAYSCALE]
-            ) {
-            resize(width: 100, height: 100)
-            grayscale
-            cumulativeSink
+query MyResizeQuery {
+    transform(
+        image: {
+            from: {
+                source: "https://someimageservice.com/image.jpg",
+                transformers: RESIZE,
+                resize: {
+                    width: 100,
+                    height: 100
+                }
+            },
+            to: {
+                format: PNG
+            }
         }
-        to(format: PNG)
+    ) {
+        url
+        success
+        message
     }
 }
 ```

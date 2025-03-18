@@ -8,11 +8,6 @@ import solutions.onz.services.imagengine.repository.DeepLinkRepository;
 
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-
-// TODO: Delete the image file from FS after dowload, or store it only in Redis
-
 
 /**
  * Reactive Service for managing deep links.
@@ -67,7 +62,7 @@ public class DeepLinkService {
                 .collectList()
                 .flatMap(dl -> {
                     if (!dl.isEmpty()) {
-                        DeepLink d = dl.get(0);
+                        DeepLink d = dl.getFirst();
                         d.setCreated(Instant.now()); // Reset timer
                         return this.deepLinkRepository.save(d);
                     }

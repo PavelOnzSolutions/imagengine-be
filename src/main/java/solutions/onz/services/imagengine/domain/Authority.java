@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serial;
@@ -22,11 +23,13 @@ public class Authority implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    private UUID id;
+    private String id;
 
     @NotNull(message = "must not be null")
     @Size(max = 50)
     private String name;
+
+    private String description;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 

@@ -15,7 +15,7 @@ import solutions.onz.services.imagengine.observability.SecurityMetersService;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import static solutions.onz.services.imagengine.utils.security.SecurityUtils.JWT_ALGORITHM;
+import static solutions.onz.services.imagengine.utils.security.SecurityUtil.JWT_ALGORITHM;
 
 @Slf4j
 @Configuration

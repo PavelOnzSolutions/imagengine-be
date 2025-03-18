@@ -15,13 +15,13 @@ import java.util.Arrays;
 /**
  * Utility class for Spring Security.
  */
-public final class SecurityUtils {
+public final class SecurityUtil {
 
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
     public static final String AUTHORITIES_KEY = "auth";
 
-    private SecurityUtils() {}
+    private SecurityUtil() {}
 
     /**
      * Get the login of the current user.

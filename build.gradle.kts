@@ -49,6 +49,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-aop")
 	implementation("org.springframework.boot:spring-boot-starter-logging")
 
+
 	implementation("jakarta.annotation:jakarta.annotation-api")
 
 	implementation("org.apache.commons:commons-lang3")
@@ -65,7 +66,7 @@ dependencies {
 	implementation("io.mongock:mongodb-reactive-driver")
 	implementation("io.mongock:mongodb-springdata-v4-driver")
 
-	implementation("org.springdoc:springdoc-openapi-starter-webflux-api:2.6.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webflux-api:2.8.5")
 
 	implementation("com.github.ulisesbocchio:jasypt-spring-boot:3.0.5")
 
@@ -76,6 +77,8 @@ dependencies {
 
 
 	implementation("com.azure.spring:spring-cloud-azure-starter-actuator")
+	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 
 
 	compileOnly("org.projectlombok:lombok")

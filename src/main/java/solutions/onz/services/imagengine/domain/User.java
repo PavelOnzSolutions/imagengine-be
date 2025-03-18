@@ -1,6 +1,7 @@
 package solutions.onz.services.imagengine.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import solutions.onz.services.imagengine.config.Constants;
@@ -84,6 +86,11 @@ public class User extends AbstractAuditingEntity<UUID> implements Serializable {
 
     @Field("reset_date")
     private Instant resetDate = null;
+
+    @DBRef
+    @Field("billing")
+    @JsonIgnoreProperties(value = { "users" }, allowSetters = true)
+    private BillingRecord billing;
 
     @JsonIgnore
     private Set<Authority> authorities = new HashSet<>();

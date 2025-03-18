@@ -1,3 +1,8 @@
+springdoc:
+  api-docs:
+    enabled: true
+  show-actuator: true
+---
 spring:
   profiles:
     default: local
@@ -24,15 +29,28 @@ spring:
       enabled: true
   security:
     oauth2:
+      client:
+        provider:
+          oidc:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+        registration:
+          oidc:
+            client-id: 522456515438-an6u0ohgg8u5geh5mbcm2i5i40n5og7i.apps.googleusercontent.com
+            client-secret: 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
+            scope: openid, profile, email, offline_access
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
       resourceserver:
         jwt:
           authority-prefix: ''
           authorities-claim-name: auth
-
+---
 mongock:
   migration-scan-package:
     - solutions.onz.services.imagengine.dbmigrations
-
+---
 management:
   endpoints:
     web:

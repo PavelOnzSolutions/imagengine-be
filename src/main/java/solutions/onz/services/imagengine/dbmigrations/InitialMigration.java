@@ -5,6 +5,7 @@ import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import solutions.onz.services.imagengine.domain.Authority;
+import solutions.onz.services.imagengine.domain.BillingRecord;
 import solutions.onz.services.imagengine.domain.User;
 import solutions.onz.services.imagengine.identity.AuthoritiesConstants;
 
@@ -37,18 +38,19 @@ public class InitialMigration {
     @RollbackExecution
     public void rollback() {}
 
-    private Authority createAuthority(String authority) {
+    private Authority createAuthority(String authority, String description) {
         Authority adminAuthority = new Authority();
         adminAuthority.setName(authority);
+        adminAuthority.setDescription(description);
         return adminAuthority;
     }
 
     private Authority createAdminAuthority() {
-        return createAuthority(AuthoritiesConstants.ADMIN);
+        return createAuthority(AuthoritiesConstants.ADMIN, "Admin authority with all the permissions");
     }
 
     private Authority createUserAuthority() {
-        return createAuthority(AuthoritiesConstants.USER);
+        return createAuthority(AuthoritiesConstants.USER, "User authority with basic permissions");
     }
 
     private void addUsers(Authority userAuthority, Authority adminAuthority) {
@@ -71,7 +73,7 @@ public class InitialMigration {
         userUser.setCreatedBy(SYSTEM);
         userUser.setCreatedDate(Instant.now());
         userUser.getAuthorities().add(userAuthority);
-        return userUser;
+        return createBilling(userUser);
     }
 
     private User createAdmin(Authority adminAuthority, Authority userAuthority) {
@@ -88,6 +90,12 @@ public class InitialMigration {
         adminUser.setCreatedDate(Instant.now());
         adminUser.getAuthorities().add(adminAuthority);
         adminUser.getAuthorities().add(userAuthority);
-        return adminUser;
+        return createBilling(adminUser);
+    }
+
+    private User createBilling(User user) {
+        BillingRecord br = new BillingRecord();
+        user.setBilling(br);
+        return user;
     }
 }

@@ -19,6 +19,7 @@ public interface UserRepository extends ReactiveMongoRepository<User, UUID> {
     Mono<User> findOneByLogin(String login);
 
     Flux<User> findAllByIdNotNull(Pageable pageable);
+    Flux<User> findAllByIdNotNull();
 
     Flux<User> findAllByIdNotNullAndActivatedIsTrue(Pageable pageable);
 }

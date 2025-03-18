@@ -8,11 +8,12 @@ services:
     extends:
       file: ./redis.yml
       service: redis
-  prometheus:
-    extends:
-      service: prometheus
-      file: ./monitoring.yml
-  grafana:
-    extends:
-      service: grafana
-      file: ./monitoring.yml
+
+#  prometheus:
+#    extends:
+#      service: prometheus
+#      file: ./monitoring.yml
+#  grafana:
+#    extends:
+#      service: grafana
+#      file: ./monitoring.yml

@@ -3,4 +3,19 @@ spring.cloud.azure:
         secret:
           property-sources[0]:
             endpoint: ${AZURE_KEYVAULT_ENDPOINT}
+server:
+  port: 80
+imagengine:
+  security:
+    csp: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com;"
+    jwt-base64-secret: YzhjZmEwODEzYTRiZDI3ODM4MTQ1NzM0MDM4ZDZiMTk1MjczOWY2Y2FhOTE3OGNmZjY2NGNmNTE5MjZmNTY2OTllYjI5ODg1NmYyNjE4MThhZDEwYWQ2Y2E3ZmFmNGUyOTVjMmU3Y2M1N2IzYjAwOGI5YjMzNTg5ODBhZDdmMmQ=
+  storage:
+    path: ./temp
+logging:
+  level:
+    solutions.onz.services.imagengine: INFO
 
+spring:
+  data:
+    mongodb:
+      uri: ${AZURE_COSMOS_CONNECTIONSTRING}

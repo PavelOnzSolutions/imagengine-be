@@ -2,28 +2,18 @@ package solutions.onz.services.imagengine.web.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import solutions.onz.services.imagengine.domain.enums.ImageFormat;
 import solutions.onz.services.imagengine.services.ImageTransformerService;
 import solutions.onz.services.imagengine.services.TransformerRestQueryParserService;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.nio.file.Files;
 import java.time.Instant;
 
 @Slf4j

@@ -36,4 +36,4 @@ imagengine:
     path: ./temp
 logging:
   level:
-    solutions.onz.services.imagengine: DEBUG
+    solutions.onz.services.imagengine: INFO

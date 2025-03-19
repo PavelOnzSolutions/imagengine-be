@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends ReactiveMongoRepository<User, UUID> {
+public interface UserRepository extends ReactiveMongoRepository<User, String> {
     Mono<User> findOneByActivationKey(String activationKey);
     Flux<User> findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant dateTime);
     Mono<User> findOneByResetKey(String resetKey);

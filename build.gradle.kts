@@ -129,5 +129,8 @@ tasks.withType<Test> {
 		showExceptions = true
 		showCauses = true
 	}
+}
 
+tasks.withType<Javadoc> {
+	 options.memberLevel = JavadocMemberLevel.PRIVATE
 }

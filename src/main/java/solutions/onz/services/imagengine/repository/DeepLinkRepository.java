@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Repository
-public interface DeepLinkRepository extends ReactiveMongoRepository<DeepLink, UUID> {
+public interface DeepLinkRepository extends ReactiveMongoRepository<DeepLink, String> {
     Mono<DeepLink> findByShortcut(String shortcut);
     Mono<DeepLink> findByPath(String path);
     Flux<DeepLink> findByPathAndCreatedAfter(String path, Instant createdAfter);

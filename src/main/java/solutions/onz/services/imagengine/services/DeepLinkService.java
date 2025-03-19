@@ -66,7 +66,12 @@ public class DeepLinkService {
                         d.setCreated(Instant.now()); // Reset timer
                         return this.deepLinkRepository.save(d);
                     }
-                    return this.deepLinkRepository.save(new DeepLink(null, generateLinkHash(), url, Instant.now()));
+                    DeepLink d = new DeepLink();
+                    d.setShortcut(generateLinkHash());
+                    d.setPath(url);
+                    d.setCreated(Instant.now());
+
+                    return this.deepLinkRepository.save(d);
                 })
                 .doOnError(error -> log.error("Error creating deep link: {}", error.getMessage()));
     }
@@ -78,7 +83,7 @@ public class DeepLinkService {
      */
     public String generateLinkHash() {
         StringBuilder hash = new StringBuilder(10);
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             hash.append(CONSONANTS[RANDOM.nextInt(CONSONANTS.length)]);
             hash.append(VOWELS[RANDOM.nextInt(VOWELS.length)]);
         }

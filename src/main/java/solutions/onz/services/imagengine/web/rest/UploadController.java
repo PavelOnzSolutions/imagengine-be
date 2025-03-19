@@ -1,5 +1,6 @@
 package solutions.onz.services.imagengine.web.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -38,6 +39,7 @@ public class UploadController {
         this.imageStorageService = imageStorageService;
     }
 
+    @Operation(summary = "Upload an image", description = "Upload an image to internal image store.", tags = {"Image API"}, operationId = "uploadImage")
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, name = "uploadImage")
     public Mono<ResponseEntity<Iterable<ImageEntity>>> uploadImage(@RequestBody MultipartFile file) {
         log.debug("REST POST request to import Competences from JSON");

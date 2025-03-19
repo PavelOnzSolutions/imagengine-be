@@ -38,8 +38,6 @@ input FromInput {
     stitch: StitchInput
     sticker: StickerInput
     watermark: WatermarkInput
-    grayscale: Boolean
-    sepia: Boolean
     cumulativeSink: Boolean
 }
 

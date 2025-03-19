@@ -21,7 +21,7 @@ public class TransformerFetcher {
 
     @DgsQuery
     public Mono<TransformResult> transform(@InputArgument TransformerInput image) {
-        return imageTransformerService.transform(image)
+        return imageTransformerService.transformGraphql(image)
                 .onErrorResume(e -> Mono.error(new ReactiveImageTransformerException("Failed to transform image: " + e.getMessage())));
 
     }

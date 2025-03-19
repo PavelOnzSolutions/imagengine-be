@@ -31,13 +31,13 @@ import java.util.UUID;
 @Getter
 @Setter
 @Document(collection = "imagengine_user")
-public class User extends AbstractAuditingEntity<UUID> implements Serializable {
+public class User extends AbstractAuditingEntity<String> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    private UUID id;
+    private String id;
 
     @Setter(AccessLevel.NONE)
     @NotNull

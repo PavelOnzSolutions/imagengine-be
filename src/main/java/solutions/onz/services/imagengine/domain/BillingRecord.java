@@ -5,11 +5,12 @@ import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Data
 @Document
-public class BillingRecord {
+public class BillingRecord extends AbstractAuditingEntity<String> implements Serializable {
     @Id
-    private UUID id;
+    private String id;
 }

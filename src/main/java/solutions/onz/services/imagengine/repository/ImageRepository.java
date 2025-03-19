@@ -7,5 +7,5 @@ import solutions.onz.services.imagengine.domain.ImageEntity;
 import java.util.UUID;
 
 @Repository
-public interface ImageRepository extends ReactiveMongoRepository<ImageEntity, UUID> {
+public interface ImageRepository extends ReactiveMongoRepository<ImageEntity, String> {
 }

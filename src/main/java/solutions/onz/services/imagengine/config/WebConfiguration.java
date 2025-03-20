@@ -16,6 +16,8 @@ import org.springframework.web.reactive.result.method.HandlerMethodArgumentResol
 import org.springframework.web.server.WebExceptionHandler;
 import solutions.onz.services.imagengine.utils.web.ExceptionTranslator;
 
+import java.util.List;
+
 @Slf4j
 @Configuration
 public class WebConfiguration implements WebFluxConfigurer {
@@ -29,6 +31,8 @@ public class WebConfiguration implements WebFluxConfigurer {
     public CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("*"));
+
         if (!CollectionUtils.isEmpty(config.getAllowedOrigins()) || !CollectionUtils.isEmpty(config.getAllowedOriginPatterns())) {
             log.debug("Registering CORS filter");
             source.registerCorsConfiguration("/graphql/**", config);

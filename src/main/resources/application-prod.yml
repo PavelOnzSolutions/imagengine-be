@@ -5,3 +5,14 @@ spring:
   mail:
     host: localhost
     port: 25
+  graphql:
+    path: /graphql
+    graphiql:
+      enabled: true
+      path: /graphiql
+    cors:
+      allowed-methods: '*'
+      allowed-headers: '*'
+      allowed-origins: '*'
+    schema:
+      locations: classpath:schema/**/

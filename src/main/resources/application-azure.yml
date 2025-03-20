@@ -9,7 +9,7 @@ imagengine:
 logging:
   level:
     solutions.onz.services.imagengine: INFO
-
+---
 spring:
   data:
     mongodb:

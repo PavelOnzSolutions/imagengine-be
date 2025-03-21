@@ -16,3 +16,7 @@ spring:
       allowed-origins: '*'
     schema:
       locations: classpath:schema/**/
+
+imagengine:
+  security:
+    csp: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com;"

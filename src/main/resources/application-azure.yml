@@ -13,6 +13,7 @@ logging:
 spring:
   data:
     mongodb:
+      auto-index-creation: true
       uri: ${AZURE_COSMOS_CONNECTIONSTRING}
     redis:
       host: ${REDIS_HOST}

@@ -1,7 +1,4 @@
 spring:
-  data:
-    mongodb:
-      auto-index-creation: true
   mail:
     host: localhost
     port: 25

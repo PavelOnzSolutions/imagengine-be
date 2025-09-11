@@ -1,4 +1,4 @@
-# ImageNgine
+# ImagEngine
 ## Image transformation service
 
 This project is an image transformation service that allows users to upload images and apply transformations to them.
